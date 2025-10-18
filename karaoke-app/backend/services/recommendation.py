@@ -133,7 +133,7 @@ class RecommendationService:
             
             # 1. 年代マッチング（最大40点）
             # CSVのyearカラムを使用
-            song_year = song.get("year", 2020)
+            song_year = song[i].get("year", 2020)
             era_diff = abs(song_year - target_era)
             if era_diff == 0:
                 score += 40
@@ -147,8 +147,8 @@ class RecommendationService:
             # 2. 性別マッチング（最大30点）
             # 性別情報がCSVにないため、性別分布に基づいて汎用的なスコアを付与
             # 男女比が偏っている場合は、その性別に合う曲を優先
-            male_ratio = gender_distribution.get("male", 0.5)
-            female_ratio = gender_distribution.get("female", 0.5)
+            male_ratio = gender_distribution[i].get("male", 0.5)
+            female_ratio = gender_distribution[i].get("female", 0.5)
             
             # バランスが取れている場合は満点、偏っている場合は調整
             balance_score = 30 * (1 - abs(male_ratio - female_ratio))
@@ -156,7 +156,7 @@ class RecommendationService:
             
             # 3. 雰囲気マッチング（最大15点）
             if mood:
-                song_mood_tags = song.get("mood_tags", "").lower()
+                song_mood_tags = song[i].get("mood_tags", "").lower()
                 mood_lower = mood.lower()
                 
                 # 完全一致
@@ -172,7 +172,7 @@ class RecommendationService:
             
             # 4. シチュエーションマッチング（最大15点）
             if situation:
-                song_situation_tags = song.get("situation_tags", "").lower()
+                song_situation_tags = song[i].get("situation_tags", "").lower()
                 situation_lower = situation.lower()
                 
                 # 完全一致
@@ -195,48 +195,8 @@ class RecommendationService:
         
         scored_songs.sort(key=lambda x: x['score'], reverse=True)
         
-        return scored_songs[:top_n]
+        return scored_songs[:1]
   
-    
-    def filter_songs_by_criteria(
-        self,
-        songs: List[Dict],
-        mood: Optional[str] = None,
-        situation: Optional[str] = None,
-        min_score: float = 0.0,
-    ) -> List[Dict]:
-        """
-        条件に基づいて曲をフィルタリング
-        
-        Args:
-            songs: 曲リスト
-            mood: 雰囲気フィルター
-            situation: シチュエーションフィルター
-            min_score: 最小スコア
-            
-        Returns:
-            フィルタリングされた曲リスト
-        """
-        filtered = songs
-        
-        # 雰囲気でフィルタリング
-        if mood:
-            filtered = [
-                s for s in filtered
-                if mood.lower() in s.get("mood", "").lower()
-            ]
-        
-        # シチュエーションでフィルタリング
-        if situation:
-            filtered = [
-                s for s in filtered
-                if situation.lower() in s.get("situation", "").lower()
-            ]
-        
-        # スコアでフィルタリング
-        filtered = [s for s in filtered if s.get("score", 0) >= min_score]
-        
-        return filtered
     
 
     # 歌う人の選択
