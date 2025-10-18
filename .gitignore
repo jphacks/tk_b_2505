@@ -1,0 +1,15 @@
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+
+# VSCodeなどIDE設定
+.vscode/
+.idea/
