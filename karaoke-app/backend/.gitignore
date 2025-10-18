@@ -1,0 +1,64 @@
+# ---- Python キャッシュ類 ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.py.class
+
+# ---- 仮想環境 (venv, Poetry, Conda など) ----
+venv/
+.env/
+.env.bak/
+.venv/
+.conda/
+*.env
+
+# ---- IDE / エディタ設定 ----
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ---- Flask / ログ / 一時ファイル ----
+instance/
+*.log
+*.bak
+*.swp
+*.pid
+*.tmp
+
+# ---- OS 固有ファイル ----
+.DS_Store
+Thumbs.db
+
+# ---- テスト・出力・ビルド生成物 ----
+dist/
+build/
+htmlcov/
+.coverage
+.pytest_cache/
+.cache/
+
+# ---- データ・モデル関連 ----
+# 学習済みモデルや一時生成されたCSV等は除外（元の songs.csv は含める）
+data/*.tmp
+data/*.bak
+data/*.log
+data/*.xlsx
+data/*.json
+!data/songs.csv   # ← songs.csv はリポジトリに含める
+
+# ---- Docker / コンテナ関連 ----
+docker-compose.override.yml
+*.db
+*.sqlite
+*.sqlite3
+
+# ---- 環境設定系（ローカル限定） ----
+config.local.*
+secrets.json
+*.key
+*.crt
+*.pem
+
