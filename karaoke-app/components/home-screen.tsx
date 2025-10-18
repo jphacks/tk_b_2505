@@ -22,7 +22,7 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
             カラオケ選曲AI
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground text-balance">世代を超えた選曲と歌う人を提案</p>
+          <p className="text-xl md:text-2xl text-muted-foreground text-balance">世代を超えた選曲と歌う人をAIが自動で勝手に提案</p>
         </div>
 
         <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 space-y-4 border border-border/50">
