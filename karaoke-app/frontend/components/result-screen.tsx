@@ -24,52 +24,41 @@ export function ResultScreen({ members, settings, onReset }: ResultScreenProps) 
   const [selectedSingers, setSelectedSingers] = useState<Member[]>([])
   const [isRevealing, setIsRevealing] = useState(true)
 
-  useEffect(() => {
-    // 年代別の曲データベース（モックデータ）
-    const songDatabase: Record<string, Song[]> = {
-      "1990s": [
-        { title: "LOVEマシーン", artist: "モーニング娘。", year: 1999, genre: "J-Pop" },
-        { title: "TSUNAMI", artist: "サザンオールスターズ", year: 2000, genre: "J-Pop" },
-        { title: "CAN YOU CELEBRATE?", artist: "安室奈美恵", year: 1997, genre: "J-Pop" },
-      ],
-      "2000s": [
-        { title: "世界に一つだけの花", artist: "SMAP", year: 2003, genre: "J-Pop" },
-        { title: "Flavor Of Life", artist: "宇多田ヒカル", year: 2007, genre: "J-Pop" },
-        { title: "千の風になって", artist: "秋川雅史", year: 2006, genre: "Ballad" },
-      ],
-      "2010s": [
-        { title: "恋", artist: "星野源", year: 2016, genre: "J-Pop" },
-        { title: "Pretender", artist: "Official髭男dism", year: 2019, genre: "J-Pop" },
-        { title: "Lemon", artist: "米津玄師", year: 2018, genre: "J-Pop" },
-      ],
-      "2020s": [
-        { title: "ドライフラワー", artist: "優里", year: 2020, genre: "J-Pop" },
-        { title: "KICK BACK", artist: "米津玄師", year: 2022, genre: "Rock" },
-        { title: "アイドル", artist: "YOASOBI", year: 2023, genre: "J-Pop" },
-      ],
-    }
+  const fetchRecommendation = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/recommend-songs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          members: members,
+          settings: settings
+        })
+      })
 
-    // メンバーの平均年齢から年代を決定
-    const avgAge = members.reduce((sum, m) => sum + m.age, 0) / members.length
-    let decade = "2010s"
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-    if (avgAge >= 45) decade = "1990s"
-    else if (avgAge >= 35) decade = "2000s"
-    else if (avgAge >= 25) decade = "2010s"
-    else decade = "2020s"
-
-    // ムードに応じて曲を選択
-    const songs = songDatabase[decade]
-    const randomSong = songs[Math.floor(Math.random() * songs.length)]
-
-    // 歌う人をランダムに選択
-    const shuffled = [...members].sort(() => Math.random() - 0.5)
-    const singers = shuffled.slice(0, settings.micCount)
-
-    setTimeout(() => {
-      setSelectedSong(randomSong)
-      setSelectedSingers(singers)
+      const data = await response.json()
+      
+      // バックエンドからのレスポンスを処理
+      setSelectedSong(data.selectedSong)
+      setSelectedSingers(data.selectedSingers)
       setIsRevealing(false)
+    } catch (error) {
+      console.error('推薦取得エラー:', error)
+      // エラー時はフォールバック処理
+      setIsRevealing(false)
+      // エラーメッセージを表示するか、デフォルトの曲を設定
+    }
+  }
+
+  useEffect(() => {
+    // 2秒のローディング時間を維持
+    setTimeout(() => {
+      fetchRecommendation()
     }, 2000)
   }, [members, settings])
 
@@ -148,7 +137,15 @@ export function ResultScreen({ members, settings, onReset }: ResultScreenProps) 
             最初から
           </Button>
           <Button
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              setIsRevealing(true)
+              setSelectedSong(null)
+              setSelectedSingers([])
+              // 2秒のローディング時間を維持
+              setTimeout(() => {
+                fetchRecommendation()
+              }, 2000)
+            }}
             size="lg"
             className="flex-1 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
           >
