@@ -64,7 +64,7 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-secondary text-xl">✓</span>
-              <span>誰が歌うか、AIがサイコロ感覚で決定</span>
+              <span>誰が歌うかをランダムに決定</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-accent text-xl">✓</span>
