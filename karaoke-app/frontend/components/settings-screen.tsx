@@ -70,7 +70,7 @@ export function SettingsScreen({ onComplete }: SettingsScreenProps) {
 
           <div className="space-y-2">
             <Label htmlFor="micCount" className="text-base">
-              <Music className="w-5 h-5 text-accent" />
+
               マイクの数（歌う人数）は？
             </Label>
             <Select value={micCount.toString()} onValueChange={(v) => setMicCount(Number.parseInt(v))}>
