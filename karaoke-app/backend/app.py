@@ -1,7 +1,9 @@
 # app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from services.recommendation import recommend_song  # ビジネスロジックを呼び出す
+from services.recommendation import RecommendationService
+from models.song import SongCatalog
+from pathlib import Path
 import os
 
 app = Flask(__name__)
@@ -18,16 +20,37 @@ CORS(app, resources={
 })
 
 # =========================================
+# グローバル変数（実際の運用では適切な初期化処理を）
+# =========================================
+song_catalog = None
+recommendation_service = None
+
+def initialize_services():
+    """サービスを初期化"""
+    global song_catalog, recommendation_service
+    try:
+        csv_path = Path(__file__).parent / "data" / "songs.csv"
+        song_catalog = SongCatalog.from_csv(csv_path)
+        recommendation_service = RecommendationService(song_catalog)
+    except Exception as e:
+        print(f"初期化エラー: {e}")
+
+# =========================================
 # APIエンドポイント
 # =========================================
-@app.route("/api/recommend", methods=["POST"])
-def api_recommend():
+@app.route("/api/recommend-songs", methods=["POST"])
+def api_recommend_songs():
     """
-    リクエストJSON例:
+    フロントエンドからのリクエスト形式:
     {
-        "age": 25,
-        "gender": "女性",
-        "mood": "happy"
+        "members": [
+            {"id": "1", "nickname": "太郎", "gender": "male", "age": 25}
+        ],
+        "settings": {
+            "mood": "upbeat",
+            "situation": "party", 
+            "micCount": 2
+        }
     }
     """
     try:
@@ -35,14 +58,20 @@ def api_recommend():
         if not data:
             return jsonify({"error": "Invalid request"}), 400
 
-        # services/recommendation.py の関数を呼び出す
-        recommended_song = recommend_song(
-            age=data.get("age"),
-            gender=data.get("gender"),
-            mood=data.get("mood")
-        )
+        members = data.get("members", [])
+        settings = data.get("settings", {})
 
-        return jsonify(recommended_song), 200
+        if not members:
+            return jsonify({"error": "Members are required"}), 400
+
+        # サービスが初期化されていない場合は初期化
+        if not recommendation_service:
+            initialize_services()
+
+        # 推薦を実行
+        result = recommendation_service.recommend_songs(members, settings)
+
+        return jsonify(result), 200
 
     except Exception as e:
         # エラーハンドリング
@@ -53,4 +82,4 @@ def api_recommend():
 # Flaskアプリ起動
 # =========================================
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)
