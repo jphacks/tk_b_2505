@@ -1,6 +1,6 @@
 # First Singin'!-カラオケ1曲目の気まずさを解消するwebアプリ🐧
 
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2025/05/JPHACKS2025_ogp.jpg)](https://www.youtube.com/watch?v=lA9EluZugD8)
+<img width="1516" height="1236" alt="Image" src="https://github.com/user-attachments/assets/028a803c-090b-4201-877b-1003422c9e4e" />
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
