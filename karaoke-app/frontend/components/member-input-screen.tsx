@@ -90,7 +90,7 @@ export function MemberInputScreen({ onComplete }: MemberInputScreenProps) {
                   type="number"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
-                  placeholder="25"
+                  placeholder="例: 25"
                   className="text-lg"
                   min="1"
                   max="100"

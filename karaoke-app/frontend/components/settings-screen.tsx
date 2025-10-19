@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Settings2, Music2, Sparkles } from "lucide-react"
+import { Settings2, Music2, Sparkles, Music, User, Mic2 } from "lucide-react"
 import type { Settings } from "@/app/page"
 
 interface SettingsScreenProps {
@@ -13,8 +13,8 @@ interface SettingsScreenProps {
 }
 
 export function SettingsScreen({ onComplete }: SettingsScreenProps) {
-  const [mood, setMood] = useState("盛り上がる")
-  const [situation, setSituation] = useState("飲み会")
+  const [mood, setMood] = useState("最新ヒット")
+  const [situation, setSituation] = useState("友人と")
   const [micCount, setMicCount] = useState(1)
 
   const handleComplete = () => {
@@ -29,25 +29,23 @@ export function SettingsScreen({ onComplete }: SettingsScreenProps) {
             <Settings2 className="w-12 h-12 text-secondary" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">選曲設定</h1>
-          <p className="text-muted-foreground">カラオケのムードを設定してください</p>
+          <p className="text-muted-foreground">カラオケのスタイルを設定しましょう！</p>
         </div>
 
         <Card className="p-8 space-y-6 bg-card/80 backdrop-blur-sm">
           <div className="space-y-2">
             <Label htmlFor="mood" className="flex items-center gap-2 text-base">
               <Music2 className="w-5 h-5 text-primary" />
-              ムード
+              年代・ジャンルは？
             </Label>
             <Select value={mood} onValueChange={setMood}>
               <SelectTrigger id="mood" className="text-lg h-12">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="盛り上がる">🎉 盛り上がる</SelectItem>
-                <SelectItem value="しっとり">🌙 しっとり</SelectItem>
-                <SelectItem value="懐かしい">💫 懐かしい</SelectItem>
-                <SelectItem value="元気">⚡ 元気</SelectItem>
-                <SelectItem value="リラックス">🌸 リラックス</SelectItem>
+                <SelectItem value="最新ヒット">⚡️ 最新ヒット</SelectItem>
+                <SelectItem value="定番曲・懐メロ">💫 定番曲・懐メロ</SelectItem>
+                <SelectItem value="演歌・昭和歌謡">📺 演歌・昭和歌謡</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -55,36 +53,35 @@ export function SettingsScreen({ onComplete }: SettingsScreenProps) {
           <div className="space-y-2">
             <Label htmlFor="situation" className="flex items-center gap-2 text-base">
               <Sparkles className="w-5 h-5 text-secondary" />
-              シチュエーション
+              誰と歌う？
             </Label>
             <Select value={situation} onValueChange={setSituation}>
               <SelectTrigger id="situation" className="text-lg h-12">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="飲み会">🍻 飲み会</SelectItem>
-                <SelectItem value="二次会">🎊 二次会</SelectItem>
-                <SelectItem value="歓迎会">👋 歓迎会</SelectItem>
-                <SelectItem value="送別会">👋 送別会</SelectItem>
-                <SelectItem value="忘年会">🎄 忘年会</SelectItem>
-                <SelectItem value="新年会">🎍 新年会</SelectItem>
+                <SelectItem value="友人と">👥 友人と</SelectItem>
+                <SelectItem value="恋人と">💑 恋人と</SelectItem>
+                <SelectItem value="家族と">👪 家族と</SelectItem>
+                <SelectItem value="会社の人と">👨‍💼 会社の人と</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="micCount" className="text-base">
-              マイクの数（歌う人数）
+              <Music className="w-5 h-5 text-accent" />
+              マイクの数（歌う人数）は？
             </Label>
             <Select value={micCount.toString()} onValueChange={(v) => setMicCount(Number.parseInt(v))}>
               <SelectTrigger id="micCount" className="text-lg h-12">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">🎤 1本（ソロ）</SelectItem>
-                <SelectItem value="2">🎤🎤 2本（デュエット）</SelectItem>
-                <SelectItem value="3">🎤🎤🎤 3本（トリオ）</SelectItem>
-                <SelectItem value="4">🎤🎤🎤🎤 4本（カルテット）</SelectItem>
+                <SelectItem value="1">🎤 1本</SelectItem>
+                <SelectItem value="2">🎤🎤 2本</SelectItem>
+                <SelectItem value="3">🎤🎤🎤 3本</SelectItem>
+                <SelectItem value="4">🎤🎤🎤🎤 4本</SelectItem>
               </SelectContent>
             </Select>
           </div>
