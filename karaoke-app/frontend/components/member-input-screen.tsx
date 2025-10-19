@@ -52,7 +52,7 @@ export function MemberInputScreen({ onComplete }: MemberInputScreenProps) {
             <Users className="w-12 h-12 text-primary" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">メンバー情報入力</h1>
-          <p className="text-muted-foreground">参加メンバーの情報を入力してください</p>
+          <p className="text-muted-foreground">参加メンバーの情報を入力しましょう！</p>
         </div>
 
         <Card className="p-6 space-y-6 bg-card/80 backdrop-blur-sm">
@@ -90,7 +90,7 @@ export function MemberInputScreen({ onComplete }: MemberInputScreenProps) {
                   type="number"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
-                  placeholder="25"
+                  placeholder="例: 25"
                   className="text-lg"
                   min="1"
                   max="100"
