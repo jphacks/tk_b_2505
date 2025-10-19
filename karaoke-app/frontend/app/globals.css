@@ -123,3 +123,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes penguin-walk {
+  0%   { left: -100px; }
+  100% { left: calc(100% + 100px); }
+}
+.animate-penguin-walk {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: penguin-walk 4s linear infinite;
+}
+
+@keyframes penguin-walk-bounce {
+  0% { left: -100px; top: 0px; }
+  10% { top: 2px; }
+  20% { top: -3px; }
+  30% { top: 4px; }
+  40% { top: -2px; }
+  50% { top: 2px; }
+  60% { top: 0px; }
+  70% { top: 6px; }
+  80% { top: -2px; }
+  90% { top: 3px; }
+  100% { left: calc(100% + 100px); top: 0px; }
+}
+.animate-penguin-walk-bounce {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: penguin-walk-bounce 4s linear infinite;
+}
+
+@keyframes penguin-walk-simple {
+  0% { left: -90px; bottom: 0; }
+  8% { bottom: 2px; }
+  16% { bottom: -1px; }
+  24% { bottom: 3px; }
+  32% { bottom: 0; }
+  40% { bottom: 1px; }
+  48% { bottom: -1px; }
+  56% { bottom: 2px; }
+  64% { bottom: 0; }
+  72% { bottom: 2px; }
+  80% { bottom: 0; }
+  100% { left: calc(100% + 90px); bottom: 0; }
+}
+.animate-penguin-walk-simple {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  animation: penguin-walk-simple 4.8s linear infinite;
+}

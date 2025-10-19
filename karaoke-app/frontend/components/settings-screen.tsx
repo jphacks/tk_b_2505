@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Settings2, Music2, Sparkles } from "lucide-react"
+import { Settings2, Music2, Sparkles, Music, User, Mic2 } from "lucide-react"
 import type { Settings } from "@/app/page"
 
 interface SettingsScreenProps {
@@ -70,6 +70,7 @@ export function SettingsScreen({ onComplete }: SettingsScreenProps) {
 
           <div className="space-y-2">
             <Label htmlFor="micCount" className="text-base">
+
               マイクの数（歌う人数）は？
             </Label>
             <Select value={micCount.toString()} onValueChange={(v) => setMicCount(Number.parseInt(v))}>
