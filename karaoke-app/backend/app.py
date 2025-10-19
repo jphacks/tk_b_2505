@@ -30,10 +30,15 @@ def initialize_services():
     global song_catalog, recommendation_service
     try:
         csv_path = Path(__file__).parent / "data" / "songs.csv"
+        print(f"CSVファイル読み込み開始: {csv_path}")
         song_catalog = pd.read_csv(csv_path)
+        print(f"CSV読み込み成功: {song_catalog.shape}")
         recommendation_service = RecommendationService(song_catalog)
+        print("サービス初期化完了")
     except Exception as e:
         print(f"初期化エラー: {e}")
+        import traceback
+        traceback.print_exc()
 
 # =========================================
 # APIエンドポイント
@@ -75,7 +80,10 @@ def api_recommend_songs():
 
     except Exception as e:
         # エラーハンドリング
-        return jsonify({"error": str(e)}), 500
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"エラー詳細: {error_details}")
+        return jsonify({"error": str(e), "details": error_details}), 500
 
 
 # =========================================
