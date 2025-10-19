@@ -1,6 +1,10 @@
 from typing import List, Dict, Optional, Tuple
 import random
 from models.song import SongCatalog, Song
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.cluster import KMeans
+import pandas as pd
+import numpy as np
 
 
 class RecommendationService:
@@ -8,7 +12,7 @@ class RecommendationService:
     カラオケ選曲のビジネスロジック
     """
     
-    def __init__(self, song_catalog: SongCatalog):
+    def __init__(self, song_catalog: pd):
         self.song_catalog = song_catalog
     
     def recommend_songs(self, members: List[Dict], settings: Dict) -> Dict:
@@ -33,15 +37,77 @@ class RecommendationService:
         
         
         # 4. 
- 
-        
-        
-        # 5. 
 
+        # ===== 1. データ読み込み =====
+        df = self.song_catalog
+
+        # ===== 2. 年代グループ分け =====
+        showa_group = df[df["year"] < 1990].copy()                   # 昭和歌謡
+        classic_group = df[(df["year"] >= 1990) & (df["year"] <= 2022)].copy()  # 定番
+        latest_group = df[df["year"] >= 2023].copy()                # 最新曲
+
+
+        def _cluster(df_group):
+            if df_group.empty:
+                return None, None, None, None, None
+
+            # カテゴリ数値化
+            le_gender = LabelEncoder()
+            le_mood = LabelEncoder()
+            df_group["gender_enc"] = le_gender.fit_transform(df_group["gender"])
+            df_group["mood_enc"] = le_mood.fit_transform(df_group["mood_tags"])
+            
+            # 年代を0-1スケーリング
+            df_group["year_scaled"] = (df_group["year"] - df_group["year"].min()) / (df_group["year"].max() - df_group["year"].min() + 1e-6)
+            
+            # 特徴量行列と標準化
+            X = df_group[["gender_enc", "mood_enc", "year_scaled"]]
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+            
+            # KMeansクラスタリング
+            k = min(8, len(df_group))
+            kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+            df_group["cluster_id"] = kmeans.fit_predict(X_scaled)
+ 
+            
+            return df_group, le_gender, le_mood, scaler, kmeans
+
+        # ===== 8. 赤星に近いクラスタからランダム曲を選択 =====
+        def pick_random_nearby_song(clustered_df, custom_song, kmeans_model):
+            custom_vec = np.array([custom_song["gender_enc"], custom_song["mood_enc"], custom_song["year_scaled"]])
+            centers = kmeans_model.cluster_centers_
+            distances = np.linalg.norm(centers - custom_vec, axis=1)
+            nearest_cluster_id = np.argmin(distances)
+            cluster_songs = clustered_df[clustered_df["cluster_id"] == nearest_cluster_id]
+            return cluster_songs.sample(1) if not cluster_songs.empty else None
         
-        # 6. 
+
+        # ===== 7. 任意の赤星曲を設定 =====
+        custom_param = {
+            "gender_enc": gender,   # 男性=0, 混合=1, 女性=2
+            "mood_enc": mood,     # しっとり=0, リラックス=1, 元気=2, 盛り上がる=3
+            "year_scaled": (year - classic_group["year"].min()) / (classic_group["year"].max() - classic_group["year"].min() + 1e-6)
+        }
+
+        # ===== 3. 昭和歌謡はランダムに1曲選択 =====
+        generation = settings.get("mood")
+        if generation == "演歌・昭和歌謡":
+            if not showa_group.empty:
+                showa_song = showa_group.sample(1)
         
-        selected_song =  # ここに歌の候補のリストが入ればOK
+
+        elif generation == "定番曲・懐メロ":
+            classic_clustered, classic_le_gender, classic_le_mood, classic_scaler, classic_kmeans = _cluster(classic_group)
+            # 定番・最新グループから曲選択
+            selected_song = pick_random_nearby_song(classic_clustered, custom_param, classic_kmeans)
+            return selected_song
+
+        elif generation == "最新ヒット":
+            latest_clustered, latest_le_gender, latest_le_mood, latest_scaler, latest_kmeans = _cluster(latest_group)
+            # 定番・最新グループから曲選択
+            selected_song = pick_random_nearby_song(latest_clustered, custom_param, latest_kmeans)
+            return selected_song
         
         # 7. 歌う人を選択
         mic_count = settings.get("micCount", 1)
@@ -50,14 +116,41 @@ class RecommendationService:
         # 8. 結果を整形
         return {
             "selectedSong": {
-                "title": selected_song.title,
-                "artist": selected_song.artist,
-                "year": selected_song.year,
-                "genre": selected_song.genre
+                "title": selected_song.iloc["title"],
+                "artist": selected_song.iloc["artist"],
+                "year": selected_song.iloc["year"]
             },
             "selectedSingers": selected_singers
         }
 
+
+
+    def _cluster(df_group, group_name):
+            if df_group.empty:
+                print(f"{group_name} に曲がありません。")
+                return None, None, None, None, None
+
+            # カテゴリ数値化
+            le_gender = LabelEncoder()
+            le_mood = LabelEncoder()
+            df_group["gender_enc"] = le_gender.fit_transform(df_group["gender"])
+            df_group["mood_enc"] = le_mood.fit_transform(df_group["mood_tags"])
+            
+            # 年代を0-1スケーリング
+            df_group["year_scaled"] = (df_group["year"] - df_group["year"].min()) / (df_group["year"].max() - df_group["year"].min() + 1e-6)
+            
+            # 特徴量行列と標準化
+            X = df_group[["gender_enc", "mood_enc", "year_scaled"]]
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+            
+            # KMeansクラスタリング
+            k = min(8, len(df_group))
+            kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+            df_group["cluster_id"] = kmeans.fit_predict(X_scaled)
+ 
+            
+            return df_group, le_gender, le_mood, scaler, kmeans
 
 
     def _divide_gender(self, members: List[Dict]) -> int:

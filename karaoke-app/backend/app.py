@@ -2,9 +2,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from services.recommendation import RecommendationService
-from models.song import SongCatalog
 from pathlib import Path
 import os
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -30,7 +30,7 @@ def initialize_services():
     global song_catalog, recommendation_service
     try:
         csv_path = Path(__file__).parent / "data" / "songs.csv"
-        song_catalog = SongCatalog.from_csv(csv_path)
+        song_catalog = pd.read_csv(csv_path)
         recommendation_service = RecommendationService(song_catalog)
     except Exception as e:
         print(f"初期化エラー: {e}")
