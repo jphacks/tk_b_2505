@@ -57,4 +57,6 @@ webアプリ名「First Singin' !」(ファーストペンギンとかけてい�
 ### 独自技術
 #### ハッカソンで開発した独自機能・技術
 * おすすめ曲を算出する独自アルゴリズム
+<img width="331" height="295" alt="Image" src="https://github.com/user-attachments/assets/8a6025a7-1e50-477d-be48-9f36119cbacc" />
+
 * 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
